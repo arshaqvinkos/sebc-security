@@ -1,0 +1,255 @@
+## Authenticating as Admin
+
+kinit admin@VINKOS.COM
+
+
+## Connecting To Beeline
+
+beeline> !connect jdbc:hive2://ip-172-31-50-202.ec2.internal:10000/default;principal=hive/_HOST@VINKOS.COM;ssl=true;sslTrustStore=/opt/cloudera/security/jks/truststore.jks;trustStorePassword=passw0rd
+
+
+## Create ROLE DBA
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> CREATE ROLE dbas;
+INFO  : Compiling command(queryId=hive_20181206121010_3de3feb8-bf4c-4f6f-8921-1552330c5a4b): CREATE ROLE dbas
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206121010_3de3feb8-bf4c-4f6f-8921-1552330c5a4b); Time taken: 0.078 seconds
+INFO  : Executing command(queryId=hive_20181206121010_3de3feb8-bf4c-4f6f-8921-1552330c5a4b): CREATE ROLE dbas
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206121010_3de3feb8-bf4c-4f6f-8921-1552330c5a4b); Time taken: 0.1 seconds
+INFO  : OK
+No rows affected (1.344 seconds)
+
+## Assign Group admins to dbas
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> GRANT ROLE dbas TO GROUP admins;
+INFO  : Compiling command(queryId=hive_20181206121111_b15c5f74-1ae7-4c69-b629-51b1b319771f): GRANT ROLE dbas TO GROUP admins
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206121111_b15c5f74-1ae7-4c69-b629-51b1b319771f); Time taken: 0.118 seconds
+INFO  : Executing command(queryId=hive_20181206121111_b15c5f74-1ae7-4c69-b629-51b1b319771f): GRANT ROLE dbas TO GROUP admins
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206121111_b15c5f74-1ae7-4c69-b629-51b1b319771f); Time taken: 0.051 seconds
+INFO  : OK
+No rows affected (0.179 seconds)
+
+## Grant all access to dbas
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> GRANT ALL ON Server server1 TO ROLE dbas WITH GRANT OPTION;
+INFO  : Compiling command(queryId=hive_20181206121111_44e12ad7-53f1-403d-bbaa-319acd999da3): GRANT ALL ON SERVER TO ROLE dbas
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206121111_44e12ad7-53f1-403d-bbaa-319acd999da3); Time taken: 0.06 seconds
+INFO  : Executing command(queryId=hive_20181206121111_44e12ad7-53f1-403d-bbaa-319acd999da3): GRANT ALL ON SERVER TO ROLE dbas
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206121111_44e12ad7-53f1-403d-bbaa-319acd999da3); Time taken: 0.05 seconds
+INFO  : OK
+No rows affected (0.122 seconds)
+
+##  Accessing Default Database as admin
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> use default;
+INFO  : Compiling command(queryId=hive_20181206121111_9a7a7454-15a1-4daa-b947-2606fcb690d2): use default
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206121111_9a7a7454-15a1-4daa-b947-2606fcb690d2); Time taken: 0.088 seconds
+INFO  : Executing command(queryId=hive_20181206121111_9a7a7454-15a1-4daa-b947-2606fcb690d2): use default
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206121111_9a7a7454-15a1-4daa-b947-2606fcb690d2); Time taken: 0.01 seconds
+INFO  : OK
+No rows affected (0.108 seconds)
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+## Create Tables
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> CREATE TABLE IF NOT EXISTS table1 ( eid int, name String,salary String, destination String) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE;
+INFO  : Compiling command(queryId=hive_20181206123838_51aa1d20-02ca-4481-8b0a-afe11452b224): CREATE TABLE IF NOT EXISTS table1 ( eid int, name String,salary String, destination String) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206123838_51aa1d20-02ca-4481-8b0a-afe11452b224); Time taken: 0.079 seconds
+INFO  : Executing command(queryId=hive_20181206123838_51aa1d20-02ca-4481-8b0a-afe11452b224): CREATE TABLE IF NOT EXISTS table1 ( eid int, name String,salary String, destination String) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206123838_51aa1d20-02ca-4481-8b0a-afe11452b224); Time taken: 0.502 seconds
+INFO  : OK
+No rows affected (0.606 seconds)
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> CREATE TABLE IF NOT EXISTS table2 ( eid int, name String,salary String, destination String, field4 string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE;
+INFO  : Compiling command(queryId=hive_20181206123939_b8b8e57e-db5e-42bd-a33c-65cf94041d2a): CREATE TABLE IF NOT EXISTS table2 ( eid int, name String,salary String, destination String, field4 string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206123939_b8b8e57e-db5e-42bd-a33c-65cf94041d2a); Time taken: 0.078 seconds
+INFO  : Executing command(queryId=hive_20181206123939_b8b8e57e-db5e-42bd-a33c-65cf94041d2a): CREATE TABLE IF NOT EXISTS table2 ( eid int, name String,salary String, destination String, field4 string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206123939_b8b8e57e-db5e-42bd-a33c-65cf94041d2a); Time taken: 0.181 seconds
+INFO  : OK
+No rows affected (0.274 seconds)
+
+
+## Verify Tables
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> show tables;
+INFO  : Compiling command(queryId=hive_20181206124040_5d5be427-93e5-4e9a-b5d8-621374319645): show tables
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:tab_name, type:string, comment:from deserializer)], properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206124040_5d5be427-93e5-4e9a-b5d8-621374319645); Time taken: 0.053 seconds
+INFO  : Executing command(queryId=hive_20181206124040_5d5be427-93e5-4e9a-b5d8-621374319645): show tables
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206124040_5d5be427-93e5-4e9a-b5d8-621374319645); Time taken: 0.09 seconds
+INFO  : OK
++-----------+--+
+| tab_name  |
++-----------+--+
+| table1    |
+| table2    |
++-----------+--+
+2 rows selected (0.159 seconds)
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+## Create Roles Managers and Analysts
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> CREATE ROLE managers;
+INFO  : Compiling command(queryId=hive_20181206124242_8b64564f-53dc-4be3-a086-161c39d3b846): CREATE ROLE managers
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206124242_8b64564f-53dc-4be3-a086-161c39d3b846); Time taken: 0.058 seconds
+INFO  : Executing command(queryId=hive_20181206124242_8b64564f-53dc-4be3-a086-161c39d3b846): CREATE ROLE managers
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206124242_8b64564f-53dc-4be3-a086-161c39d3b846); Time taken: 0.015 seconds
+INFO  : OK
+No rows affected (0.081 seconds)
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> GRANT ROLE managers TO GROUP managers; 
+INFO  : Compiling command(queryId=hive_20181206124242_fe4b1832-1291-4a57-906b-4f5817f40cea): GRANT ROLE managers TO GROUP managers
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206124242_fe4b1832-1291-4a57-906b-4f5817f40cea); Time taken: 0.051 seconds
+INFO  : Executing command(queryId=hive_20181206124242_fe4b1832-1291-4a57-906b-4f5817f40cea): GRANT ROLE managers TO GROUP managers
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206124242_fe4b1832-1291-4a57-906b-4f5817f40cea); Time taken: 0.01 seconds
+INFO  : OK
+No rows affected (0.069 seconds)
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> CREATE ROLE analysts;
+INFO  : Compiling command(queryId=hive_20181206124242_1d094842-9f9f-4cf4-a3f9-87270c49ff56): CREATE ROLE analysts
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206124242_1d094842-9f9f-4cf4-a3f9-87270c49ff56); Time taken: 0.05 seconds
+INFO  : Executing command(queryId=hive_20181206124242_1d094842-9f9f-4cf4-a3f9-87270c49ff56): CREATE ROLE analysts
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206124242_1d094842-9f9f-4cf4-a3f9-87270c49ff56); Time taken: 0.008 seconds
+INFO  : OK
+No rows affected (0.069 seconds)
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> GRANT ROLE analysts TO GROUP analysts; 
+INFO  : Compiling command(queryId=hive_20181206124242_f9b546be-f939-4f48-a6ce-31b602f41b87): GRANT ROLE analysts TO GROUP analysts
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206124242_f9b546be-f939-4f48-a6ce-31b602f41b87); Time taken: 0.05 seconds
+INFO  : Executing command(queryId=hive_20181206124242_f9b546be-f939-4f48-a6ce-31b602f41b87): GRANT ROLE analysts TO GROUP analysts
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206124242_f9b546be-f939-4f48-a6ce-31b602f41b87); Time taken: 0.01 seconds
+INFO  : OK
+No rows affected (0.07 seconds)
+
+
+## Grant ALL On Table1 to Managers
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> GRANT ALL ON Table default.table1 TO ROLE managers;
+INFO  : Compiling command(queryId=hive_20181206124545_b2f5e3cb-cdcd-47eb-81b5-2402b4c95cec): GRANT ALL ON Table default.table1 TO ROLE managers
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206124545_b2f5e3cb-cdcd-47eb-81b5-2402b4c95cec); Time taken: 0.051 seconds
+INFO  : Executing command(queryId=hive_20181206124545_b2f5e3cb-cdcd-47eb-81b5-2402b4c95cec): GRANT ALL ON Table default.table1 TO ROLE managers
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206124545_b2f5e3cb-cdcd-47eb-81b5-2402b4c95cec); Time taken: 0.013 seconds
+INFO  : OK
+No rows affected (0.072 seconds)
+
+## Grant SELECT On Table2 to analysts
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> GRANT SELECT ON Table default.table2 TO ROLE analysts;
+INFO  : Compiling command(queryId=hive_20181206124646_4af252cf-e74c-4b2b-9750-2390f4de8f8c): GRANT SELECT ON Table default.table2 TO ROLE analysts
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:null, properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206124646_4af252cf-e74c-4b2b-9750-2390f4de8f8c); Time taken: 0.05 seconds
+INFO  : Executing command(queryId=hive_20181206124646_4af252cf-e74c-4b2b-9750-2390f4de8f8c): GRANT SELECT ON Table default.table2 TO ROLE analysts
+INFO  : Starting task [Stage-0:DDL] in serial mode
+INFO  : Completed executing command(queryId=hive_20181206124646_4af252cf-e74c-4b2b-9750-2390f4de8f8c); Time taken: 0.01 seconds
+INFO  : OK
+No rows affected (0.068 seconds)
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+## Testing with user1
+
+[centos@ip-172-31-50-202 jks]$ kinit user1@VINKOS.COM
+Password for user1@VINKOS.COM: 
+[centos@ip-172-31-50-202 jks]$ beeline
+
+	## Table 1
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> select * from table1;
+INFO  : Compiling command(queryId=hive_20181206130505_69f9910c-d65f-44ad-8ac4-e5a8ddbf9099): select * from table1
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:table1.eid, type:int, comment:null), FieldSchema(name:table1.name, type:string, comment:null), FieldSchema(name:table1.salary, type:string, comment:null), FieldSchema(name:table1.destination, type:string, comment:null)], properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206130505_69f9910c-d65f-44ad-8ac4-e5a8ddbf9099); Time taken: 0.134 seconds
+INFO  : Executing command(queryId=hive_20181206130505_69f9910c-d65f-44ad-8ac4-e5a8ddbf9099): select * from table1
+INFO  : Completed executing command(queryId=hive_20181206130505_69f9910c-d65f-44ad-8ac4-e5a8ddbf9099); Time taken: 0.0 seconds
+INFO  : OK
++-------------+--------------+----------------+---------------------+--+
+| table1.eid  | table1.name  | table1.salary  | table1.destination  |
++-------------+--------------+----------------+---------------------+--+
+| 1           | Bob          | 2000           | MX                  |
+| 2           | Alice        | 2500           | US                  |
+| 3           | Joe          | 2333           | MX                  |
+| 4           | Jack         | 5000           | US                  |
++-------------+--------------+----------------+---------------------+--+
+4 rows selected (0.238 seconds)
+
+	## Table 2
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> select * from table2;
+Error: Error while compiling statement: FAILED: SemanticException No valid privileges
+ User user1 does not have privileges for QUERY
+ The required privileges: Server=server1->Db=default->Table=table2->Column=destination->action=select; (state=42000,code=40000)
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> 
+
+
+## Testing with user2
+
+[centos@ip-172-31-50-202 jks]$ kinit user2@VINKOS.COM
+Password for user2@VINKOS.COM: 
+
+
+	## Table 1
+
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> select * from table1;
+Error: Error while compiling statement: FAILED: SemanticException No valid privileges
+ User user2 does not have privileges for QUERY
+ The required privileges: Server=server1->Db=default->Table=table1->Column=destination->action=select; (state=42000,code=40000)
+
+
+
+
+	## Table 2
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> select * from table2;
+INFO  : Compiling command(queryId=hive_20181206130707_71a05206-33b5-4ff7-a120-afb9e419e602): select * from table2
+INFO  : Semantic Analysis Completed
+INFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:table2.eid, type:int, comment:null), FieldSchema(name:table2.name, type:string, comment:null), FieldSchema(name:table2.salary, type:string, comment:null), FieldSchema(name:table2.destination, type:string, comment:null), FieldSchema(name:table2.field4, type:string, comment:null)], properties:null)
+INFO  : Completed compiling command(queryId=hive_20181206130707_71a05206-33b5-4ff7-a120-afb9e419e602); Time taken: 0.102 seconds
+INFO  : Executing command(queryId=hive_20181206130707_71a05206-33b5-4ff7-a120-afb9e419e602): select * from table2
+INFO  : Completed executing command(queryId=hive_20181206130707_71a05206-33b5-4ff7-a120-afb9e419e602); Time taken: 0.001 seconds
+INFO  : OK
++-------------+--------------+----------------+---------------------+----------------+--+
+| table2.eid  | table2.name  | table2.salary  | table2.destination  | table2.field4  |
++-------------+--------------+----------------+---------------------+----------------+--+
+| 1           | Bob          | 2000           | MX                  | test           |
+| 2           | Alice        | 2500           | US                  | test           |
+| 3           | Joe          | 2333           | MX                  | test           |
+| 4           | Jack         | 5000           | US                  | test           |
++-------------+--------------+----------------+---------------------+----------------+--+
+4 rows selected (0.184 seconds)
+0: jdbc:hive2://ip-172-31-50-202.ec2.internal> 
