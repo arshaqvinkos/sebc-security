@@ -1,0 +1,5 @@
+DataNode Transceiver Port = 1035 (Greater Than 1024)
+
+Secure DataNode Web UI Port (TLS/SSL) = 50475 (Greater Than 1024)
+
+DataNode Data Transfer Protection = Privacy

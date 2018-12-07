@@ -1,0 +1,3 @@
+For encrypting data in Kafka, Kudu and Flume, we need to use Navigator Encrypt. For data stored in HDFS ,we can use Transparent Data Encryption but, for these services which doesnot use HDFS as storage need to use Navigator Encrypt.
+
+Navigator Encrypt encrypts at disk level, so it is important to use dedicated disks for these services in case we are going to encrypt data from these sources.

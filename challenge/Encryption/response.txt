@@ -1,0 +1,52 @@
+For Transparent Data Encryption, it is required that the folder in HDFS is created as an encrypted zone before starting to write data to the folder.
+
+In case the folders were not encrypted before, we need to first move the folder to a temporary location.
+
+Here we have 2 databases and we need to restrict the access to each databases for different groups. 
+
+So first step that we need to do is to have 2 separate keys and 2 separate encrypted zones, 1 for finance data and another for hr data.If we use same key for both finance and hr data,someone from HR could read data from finance.
+
+1. Create  2 keys 1 for finance and another for hr using key_admin, which is the administrator of keys. This key_admin is different from HDFS superuser.
+
+
+	 sudo -u key_admin hadoop key create key_finance
+
+	 sudo -u key_admin hadoop key create key_hr
+
+2. Create 2 encrypted zones in HDFS under /user/hive/warehouse
+
+	sudo -u hdfs hadoop fs -mkdir /user/hive/warehouse/finance
+
+	sudo -u hdfs hadoop fs -mkdir /user/hive/warehouse/hr
+
+    sudo -u hdfs hdfs crypto -createZone -keyName key_finance -path /user/hive/warehouse/finance
+
+    sudo -u hdfs hdfs crypto -createZone -keyName key_hr -path /user/hive/warehouse/hr
+
+
+3   Remove hdfs access for the encrypted zones
+
+    hdfs dfs -setfacl -x user:hdfs /user/hive/warehouse/finance/
+    hdfs dfs -setfacl -x user:hdfs /user/hive/warehouse/hr/
+
+4    Give Hive access to read and write
+
+ 
+    hdfs dfs -setfacl -m group:hive:rwx /user/hive/warehouse
+
+
+5. Give managers and analysts access
+
+
+    hdfs dfs -setfacl -m group:finance_managers:rwx /user/hive/warehouse/finance/
+    hdfs dfs -setfacl -m group:hr_managers:rwx /user/hive/warehouse/hr/
+
+6. Give Managers Select access to other directory
+
+    hdfs dfs -setfacl -m group:finance_managers:r-x /user/hive/warehouse/hr/
+    hdfs dfs -setfacl -m group:hr_managers:r-x /user/hive/warehouse/finance/
+
+7. Give Analysts Select Access
+
+ 	hdfs dfs -setfacl -m group:finance_analysts:r-x /user/hive/warehouse/finance/
+    hdfs dfs -setfacl -m group:hr_analysts:r-x /user/hive/warehouse/hr/

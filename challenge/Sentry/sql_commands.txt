@@ -1,0 +1,44 @@
+## Sentry Commands
+
+We have 2 databases called finance and hr which belongs to business Area Finance and HR respectively.
+
+Databases : 
+1.finance
+2.hr
+
+Assumptions :
+1. We have sentry installed and have a centry admin called 'admin' which belongs to ROLE 'admins' which is mapped to Group 'admins.
+2. User admin has complete access to sentry.
+3. Group of finance managers is 'finance_managers' in LDAP or AD.
+4. Group of finance analysts is 'finance_analysts' in LDAP or AD.
+5. Group of finance managers is 'hr_managers' in LDAP or AD.
+6. Group of finance analysts is 'hr_analysts' in LDAP or AD.
+
+To restrict the access to managers and analysts as mentioned in the problem, execute the following commands logging in as admin.
+
+1. Create Roles 
+
+   - CREATE ROLE finance_managers;
+   - CREATE ROLE finance_analysts;
+   - CREATE ROLE hr_managers;
+   - CREATE ROLE hr_analysts;
+   
+2. Assign Groups
+
+   - GRANT ROLE finance_managers TO GROUP finance_managers; 
+   - GRANT ROLE hr_managers TO GROUP hr_managers; 
+   - GRANT ROLE finance_analysts TO GROUP finance_analysts; 
+   - GRANT ROLE hr_analysts TO GROUP hr_analysts; 
+
+3. Grant Accesses
+
+   - GRANT ALL ON DATABASE finance TO ROLE finance_managers;
+   - GRANT ALL ON DATABASE hr TO ROLE hr_managers;
+   
+
+   - GRANT SELECT ON DATABASE hr TO ROLE finance_managers;
+   - GRANT SELECT ON DATABASE finance TO ROLE hr_managers;
+   
+   - GRANT SELECT ON DATABASE hr TO ROLE hr_analysts;
+   - GRANT SELECT ON DATABASE finance TO ROLE finance_analysts;
+

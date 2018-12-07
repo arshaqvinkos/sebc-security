@@ -46,9 +46,9 @@ As we cannot encrypt the already existing paths in HDFS, to encrypt the data in 
 
 5) Depending on the Step 4, we may need to create 1 or more encrypted zones. 
 
-6) To create an encrypted zone, first we need a key.As key admin create a key 
+6) To create an encrypted zone, first we need a key.As key_admin user,create a key 
 
-	 sudo -u <key_admin> hadoop key create <key_name>
+	 sudo -u key_admin hadoop key create <key_name>
 
 7) Verify created key using 
 	
@@ -57,6 +57,20 @@ As we cannot encrypt the already existing paths in HDFS, to encrypt the data in 
 	sudo -u hdfs hadoop fs -mkdir /user/hive/warehouse (Or Inner Directories depending on the number of encrypted zones)
 9) sudo -u hdfs hdfs crypto -createZone -keyName <key_name> -path /encryption_zone
 
+10) Restrict access to the data only to group hive and other groups which are required to read the data. Remove access for hdfs.
+
+
+3   Remove hdfs access for the encrypted zones
+
+    hdfs dfs -setfacl -x user:hdfs /user/hive/warehouse/finance/
+    hdfs dfs -setfacl -x user:hdfs /user/hive/warehouse/hr/
+
+4    Give Hive access to read
+
+ 
+    hdfs dfs -setfacl -m group:hive:rwx /user/hive/warehouse
+   	hdfs dfs -setfacl -m group:groupx:rwx /user/hive/warehouse
+    
 --------------------------------------------------------------------
 
 Move Data To Encrypted Zones

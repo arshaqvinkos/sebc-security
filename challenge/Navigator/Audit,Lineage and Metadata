@@ -1,0 +1,27 @@
+
+Navigator Audit
+
+- Navigator Audit can be used to see the recent commands that are being executed in the cluster. 
+- It provide information regarding who is executing the commands, what time, what type of commands like a select, insert, or remove etc.
+- Also there is option to create custom reports using which we can monitor who is deleting data, who is being denied access etc.
+- Audit data is stored in a database in backend.
+
+
+Navigator Metadata.
+
+ - Metadata tool helps in managing the metadata of all the data in the cluster.
+ - It has a search option, which allows us to find the name of table or location in HDFS using a key word.
+ - It has an option to add description to each columns in a table so that the end user can easliy understand what each field means. Can be also used to add description to Tables.
+ - It allows tagging information which helps in categorizing information and these tags can be used for future searches.
+ - It also allows auto-tagging for the upcoming data.
+ - It uses Solr in the backend for searching information in cluster.
+
+ Navigator Lineage.
+
+ - Lineage helps to understand the flow of data inside cluster.
+ - It can be used to identify how a table is created in Hive, what is the query used, what is source etc.
+ - It also allows to find the flow for Spark,Pig etc.
+ - It has an api which can be used to get the lineage information from Cloudera and combine it with other data sources and tools and provide enterprise level Data Lineage.
+ 
+
+
