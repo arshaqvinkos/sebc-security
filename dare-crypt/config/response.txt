@@ -1,1 +1,68 @@
-Add your response here
+Install and Configure Key Store and Key Management Service(KMS)
+
+1.Choose a Key Store to store the keys : 
+	If the client already has HSM, it can be used for Cloudera provides Cloudera Navigator Key Trustee Server for a cluster in Production.
+
+2. Go to Cloudera Manager and Configure Key Store :
+	In this step, configure key store that was decided in the previos step. This can be done in Cloudera Manager. Go To,
+
+	2a) Cluster -> Actions ->  Set up HDFS Data At Rest Encryption 
+	2b) Choose the root of trust for encyption keys selected and complete the steps.
+
+3. At the end of step 2, it is required to Install Parcel for Key Trustee KMS and add the service to cluster. KMS acts as a proxy between keystore and cluster.Enable it in HA.
+
+At this point we have configured keystore and KMS which are required for Encryption. 
+
+4. To optimize the encryption process cloudera recommends installing libcrypto.so on HDFS and MapReduce client hosts, for this run the following command
+	 sudo yum install openssl-devel.
+
+To verify the optimization,run 
+	hadoop checknative
+and the output should show true in openssl line.
+
+----------------------------------------------------------------------
+Managing Users using KMS ACLs
+
+1) We need a {key admin} user who will be responsible for creating keys.
+This user should be different from HDFS superusers.
+
+2) Do not give HDFS superusers access to create the encryption keys.
+
+This step is to make sure that someone with access to hdfs superuser cannot decrypt all the encrypted information.
+
+-----------------------------------------------------------------------
+
+Creating Encrypted Zones
+
+As we cannot encrypt the already existing paths in HDFS, to encrypt the data in /user/hive/warehouse, we need to do the following. 
+
+1 ) We need to move(rename) the /user/hive/warehouse to another location (eg: /user/hive/warehouse_temp)
+
+2) Before doing step 1, we need to ensure we have enough space in Cluster to do so.
+
+3) If there is not enough space, we might need to move the data first to local disk (which could help as the data will be 1/3rd as in HDFS it is replicated)
+
+4) Decide if we need to encrypt all the data in /user/hive/warehouse using same key or we should create separate encryption zones for different business areas/sensitive information.
+
+5) Depending on the Step 4, we may need to create 1 or more encrypted zones. 
+
+6) To create an encrypted zone, first we need a key.As key admin create a key 
+
+	 sudo -u <key_admin> hadoop key create <key_name>
+
+7) Verify created key using 
+	
+	hadoop key list
+8) Create the encrypted zone 
+	sudo -u hdfs hadoop fs -mkdir /user/hive/warehouse (Or Inner Directories depending on the number of encrypted zones)
+9) sudo -u hdfs hdfs crypto -createZone -keyName <key_name> -path /encryption_zone
+
+--------------------------------------------------------------------
+
+Move Data To Encrypted Zones
+
+ Now that we have created encrypted zones, next step is to move data to encrypted zones.
+
+1) We can use distcp to move data from one path to another
+
+hadoop distcp hdfs://cluster:8020/user/hive/warehouse_temp/ hdfs://cluster:8020//user/hive/warehouse/
