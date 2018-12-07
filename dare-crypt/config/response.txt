@@ -66,3 +66,7 @@ Move Data To Encrypted Zones
 1) We can use distcp to move data from one path to another
 
 hadoop distcp hdfs://cluster:8020/user/hive/warehouse_temp/ hdfs://cluster:8020//user/hive/warehouse/
+
+2) Delete the Temp folder 
+
+hdfs dfs -rm -skipTrash /user/hive/warehouse_temp/ 
